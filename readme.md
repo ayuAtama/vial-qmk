@@ -1,36 +1,122 @@
-# Quantum Mechanical Keyboard Firmware
+# Vial-QMK Setup and Firmware Guide (Windows)
 
-[![Current Version](https://img.shields.io/github/tag/qmk/qmk_firmware.svg)](https://github.com/qmk/qmk_firmware/tags)
-[![Discord](https://img.shields.io/discord/440868230475677696.svg)](https://discord.gg/qmk)
-[![Docs Status](https://img.shields.io/badge/docs-ready-orange.svg)](https://docs.qmk.fm)
-[![GitHub contributors](https://img.shields.io/github/contributors/qmk/qmk_firmware.svg)](https://github.com/qmk/qmk_firmware/pulse/monthly)
-[![GitHub forks](https://img.shields.io/github/forks/qmk/qmk_firmware.svg?style=social&label=Fork)](https://github.com/qmk/qmk_firmware/)
+This guide explains how to set up your environment, compile firmware, and flash it to my keyboard using QMK and Vial on Windows.
 
-This is a keyboard firmware based on the [tmk\_keyboard firmware](https://github.com/tmk/tmk_keyboard) with some useful features for Atmel AVR and ARM controllers, and more specifically, the [OLKB product line](https://olkb.com), the [ErgoDox EZ](https://ergodox-ez.com) keyboard, and the Clueboard product line.
+## ✅ Enabled Features Overview
 
-## Documentation
+The firmware is built with the following features enabled:
 
-* [See the official documentation on docs.qmk.fm](https://docs.qmk.fm)
+* **VIA / VIAL Support**: Easily remap keys using VIA or Vial.
+* **Tap Dance & Combo**: Configure keys with multiple functions.
+* **QMK Settings & Extra Keys**: Includes advanced system and media keys.
+* **Mouse Keys**: Control your mouse pointer from the keyboard.
+* **Performance**: Link Time Optimization (LTO) enabled for smaller, faster firmware.
+* **OLED & RGB**: Disabled to save space.
+* **Keymap Layer**: 6 Layer
 
-The docs are powered by [VitePress](https://vitepress.dev/). They are also viewable offline; see [Previewing the Documentation](https://docs.qmk.fm/#/contributing?id=previewing-the-documentation) for more details.
+```makefile
+VIA_ENABLE          = yes
+VIAL_ENABLE         = yes
+LTO_ENABLE          = yes
 
-You can request changes by making a fork and opening a [pull request](https://github.com/qmk/qmk_firmware/pulls).
+TAP_DANCE_ENABLE    = yes
+COMBO_ENABLE        = yes
+QMK_SETTINGS        = yes
+MOUSEKEY_ENABLE     = yes
+EXTRAKEY_ENABLE     = yes
+VIAL_INSECURE       = yes
 
-## Supported Keyboards
+OLED_ENABLE         = no
+OLED_DRIVER         = ssd1306
+RGBLIGHT_ENABLE     = no
+RGB_MATRIX_ENABLE   = no  # Can't have RGBLIGHT and RGB_MATRIX at the same time.
+KEY_OVERRIDE_ENABLE = no
+```
 
-* [Planck](/keyboards/planck/)
-* [Preonic](/keyboards/preonic/)
-* [ErgoDox EZ](/keyboards/ergodox_ez/)
-* [Clueboard](/keyboards/clueboard/)
-* [Cluepad](/keyboards/clueboard/17/)
-* [Atreus](/keyboards/atreus/)
+---
 
-The project also includes community support for [lots of other keyboards](/keyboards/).
+## 🧰 Environment Setup
 
-## Maintainers
+### 1. Install QMK MSYS
 
-QMK is developed and maintained by Jack Humbert of OLKB with contributions from the community, and of course, [Hasu](https://github.com/tmk). The OLKB product firmwares are maintained by [Jack Humbert](https://github.com/jackhumbert), the Ergodox EZ by [ZSA Technology Labs](https://github.com/zsa), the Clueboard by [Zach White](https://github.com/skullydazed), and the Atreus by [Phil Hagelberg](https://github.com/technomancy).
+Download the latest QMK MSYS installer from the [official release page](https://github.com/qmk/qmk_distro_msys/releases/latest) and install it.
 
-## Official Website
+### 2. Run QMK Setup
 
-[qmk.fm](https://qmk.fm) is the official website of QMK, where you can find links to this page, the documentation, and the keyboards supported by QMK.
+Launch **QMK MSYS** and run:
+
+```bash
+qmk setup
+```
+
+Respond with `y` (yes) to all prompts.
+
+### 3. Verify Installation
+
+Check your setup:
+
+```bash
+qmk doctor
+```
+
+Test the compilation with:
+
+```bash
+qmk compile -kb clueboard/66/rev3 -km default
+```
+
+### 4. Clone the Vial-QMK Repository
+
+Use my customized fork of Vial-QMK:
+
+```bash
+git clone https://github.com/ayuAtama/vial-qmk.git
+cd vial-qmk
+```
+
+### 5. Initialize Submodules and Recheck
+
+```bash
+make git-submodule
+qmk doctor
+```
+
+---
+
+## ⚙️ Compile and Flash Firmware
+
+### 1. Compile the Firmware
+
+```bash
+make crkbd/rev1:ekadeva
+```
+
+### 2. Flash the Firmware
+
+```bash
+qmk flash -kb crkbd/rev1 -km ekadeva
+```
+
+### 3. Enter Flashing Mode
+
+* Tap the **reset button twice** next to the MCU to enter DFU mode.
+* Repeat this step for the **right half** of the keyboard.
+
+### 4. Done!
+
+Your firmware has now been successfully flashed.
+
+---
+
+## 📝 Notes
+
+* This guide is specifically tailored for the **Corne (crkbd)** keyboard and the **ekadeva** keymap.
+* Ensure you have the correct drivers installed if flashing fails (e.g., **QMK Toolbox** or **Zadig** for DFU support).
+
+---
+
+## 📌 Resources
+
+* [Vial-QMK (fork)](https://github.com/ayuAtama/vial-qmk)
+* [QMK MSYS Releases](https://github.com/qmk/qmk_distro_msys/releases/latest)
+* [QMK Documentation](https://docs.qmk.fm/)
